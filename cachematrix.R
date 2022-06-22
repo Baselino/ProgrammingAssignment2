@@ -10,7 +10,9 @@
 ## The function makeCacheMatrix takes a matrix object as input. 
 ## It creates a list object with four list elements. 
 ## Each list element is a function. 
-## The list is the basis for caching the inverse of a matrix. 
+## The list is the basis for caching the inverse of a matrix
+## in the parent environment. How R looks for objects and 
+## assigns values to them (lexical scoping) helps for caching. 
 
 makeCacheMatrix <- function(x = matrix()) {
   # in global environment inv <- NULL  
@@ -41,7 +43,7 @@ makeCacheMatrix <- function(x = matrix()) {
 ## computes and caches the inverse of a matrix
 
 cacheSolve <- function(x, ...) {
-  ## call inv from list 
+  ## call inv from list object created with makeCacheMatrix
   inv <- x$getinv()
   # if inv is NOT NULL, the cached data is returned
   if(!is.null(inv)) {
@@ -49,10 +51,13 @@ cacheSolve <- function(x, ...) {
     return(inv)
   }
   # if inv is NULL, the data from the matrix is obtained
+  # using the get function in the list object created by 
+  # makeCacheMatrix
   data <- x$get()
-  # the inverse is caclualted with the solve() function
+  # the inverse is calculated with the solve() function
   inv <- solve(data, ...)
-  # this is the step where the result is cached
+  # this is the step where the result is cached, 
+  # remember that setinv puts result in the parent environment
   x$setinv(inv)
   # the inverse is returned as ouptut
   inv
